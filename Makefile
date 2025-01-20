@@ -5,34 +5,26 @@ LDFLAGS = -L/opt/homebrew/lib -lavcodec -lavformat -lavutil -lboost_system `pkg-
 
 # 빌드 대상 및 디렉토리 설정
 TARGET = p2p-streaming
-SRCDIR = src
-OBJDIR = obj
+SRC_DIR = src
+OBJ_DIR = obj
 
 # 소스 및 객체 파일
-SRCS = $(wildcard $(SRCDIR)/*.cpp)
-OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
+SRCS = $(wildcard $(SRC_DIR)/**/*.cpp $(SRC_DIR)/*.cpp)
+OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 
 # 빌드 규칙
 $(TARGET): $(OBJS)
 	$(CXX) -o $@ $^ $(LDFLAGS)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	@mkdir -p $(OBJDIR)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # 클린업 규칙
 clean:
-	rm -rf $(OBJDIR)
+	rm -rf $(OBJ_DIR)
 
 fclean: clean
 	rm -f $(TARGET)
 
 re: fclean $(TARGET)
-
-# 헬프 메시지
-help:
-	@echo "사용 가능한 명령어:"
-	@echo "  make          - 빌드 실행"
-	@echo "  make clean    - 객체 파일 제거"
-	@echo "  make fclean   - 객체 파일 및 실행 파일 제거"
-	@echo "  make re       - 빌드 초기화 후 다시 빌드"
