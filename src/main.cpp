@@ -1,11 +1,13 @@
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include <libavutil/imgutils.h>
-
 #include <boost/asio.hpp>
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
+extern "C"
+{
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#include <libavutil/imgutils.h>
+}
 // Boost.Asio: 간단한 TCP 연결 테스트
 void testBoostAsio()
 {
@@ -43,6 +45,43 @@ void testBoostAsio()
     }
 }
 
+// OpenCV: 간단한 이미지 로드 및 표시
+void testOpenCV()
+{
+    cv::Mat image = cv::imread("./assets/hyungjup_출입증사진.jpg");
+    if (image.empty())
+    {
+        std::cerr << "OpenCV error: Failed to load jpg file" << std::endl;
+        return;
+    }
+    cv::imshow("OpenCV Test", image);
+    cv::waitKey(0); // 키 입력 대시
+    std::cout << "OpenCV: Image displayed successfully" << std::endl;
+}
+
+// FFmpeg: 간단한 비디오 파일 정보 출력
+void testFFmpeg(const char *filename)
+{
+    AVFormatContext *formatContext = avformat_alloc_context();
+    if (!formatContext)
+    {
+        std::cerr << "FFmpeg error: Could not allocate format context" << std::endl;
+        return;
+    }
+
+    if (avformat_open_input(&formatContext, filename, nullptr, nullptr) != 0)
+    {
+        std::cerr << "FFmpeg error: Could not open file" << std::endl;
+        avformat_free_context(formatContext);
+        return;
+    }
+
+    std::cout << "FFmpeg: File information for " << filename << std::endl;
+    av_dump_format(formatContext, 0, filename, 0);
+    avformat_close_input(&formatContext);
+    avformat_free_context(formatContext);
+}
+
 int main(int argc, char *argv[])
 {
     std::cout << "Starting the P2P Video Streaming Test..." << std::endl;
@@ -50,16 +89,16 @@ int main(int argc, char *argv[])
     // 1. Boost.Asio 테스트
     testBoostAsio();
 
-    // // 2. OpenCV 테스트
-    // testOpenCV();
+    // 2. OpenCV 테스트
+    testOpenCV();
 
-    // // 3. FFmpeg 테스트
-    // if (argc > 1)
-    // {
-    //     testFFmpeg(argv[1]);
-    // }
-    // else
-    // {
-    //     std::cerr << "Usage: ./p2p-streaming <video-file>" << std::endl;
-    // }
+    // 3. FFmpeg 테스트
+    if (argc > 1)
+    {
+        testFFmpeg(argv[1]);
+    }
+    else
+    {
+        std::cerr << "Usage: ./p2p-streaming <video-file>" << std::endl;
+    }
 }
