@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/opt/homebrew/include",
+                "/opt/homebrew/include/opencv4",
+                "/opt/homebrew/include/boost",
+                "/opt/homebrew/opt/ffmpeg/include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",  // M2에서는 기본적으로 Clang 사용
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macos-clang-arm64" // ARM 아키텍처에 맞춤
+        }
+    ],
+    "version": 4
+}
