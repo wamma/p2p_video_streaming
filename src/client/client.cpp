@@ -9,17 +9,16 @@ Client::Client(boost::asio::io_context &io_context, const std::string &host, int
 
 void Client::start()
 {
-    boost::asio::async_read(
-        _socket, boost::asio::buffer(_buffer), [this](boost::system::error_code ec, std::size_t length) {
-            if (!ec)
-            {
-                std::cout << "Message from server: " << std::string(_buffer.data(), length) << std::endl;
-            }
-            else
-            {
-                std::cerr << "Error reading from server: " << ec.message() << std::endl;
-            }
-        });
+    _socket.async_read_some(boost::asio::buffer(_buffer), [this](boost::system::error_code ec, std::size_t length) {
+        if (!ec)
+        {
+            std::cout << "Message from server: " << std::string(_buffer.data(), length) << std::endl;
+        }
+        else
+        {
+            std::cerr << "Error reading from server: " << ec.message() << std::endl;
+        }
+    });
 
     try
     {
